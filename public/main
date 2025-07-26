@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Feedback System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .login-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .feedback-section {
+            display: none;
+        }
+
+        .employee-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #e9ecef;
+        }
+
+        .employee-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .employee-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .rating-input {
+            width: 80px;
+            text-align: center;
+        }
+
+        .progress-bar {
+            background: #e9ecef;
+            height: 10px;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .current-user {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #28a745;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .submit-section {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .reason-section {
+            margin-top: 10px;
+            display: none;
+        }
+
+        .reason-section textarea {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .reason-low {
+            border-color: #dc3545 !important;
+            background-color: #fff5f5;
+        }
+
+        .reason-high {
+            border-color: #28a745 !important;
+            background-color: #f0fff4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Employee Feedback System</h1>
+            <p>नेतृत्व, कामाची गुणवत्ता, विषयाचे ज्ञान आणि कौशल्य, जबाबदारी आणि विश्वासार्हता, पुढाकार आणि नावीन्य, सहकार्य व वर्तवणूक या निकषांच्या आधारावर मूल्यांकन करण्यात यावे.  </p>
+            <P>आपण केलेले मूल्यांकन गोपनीय राहील व ते कुठेही प्रकाशित होणार नाही. </P>
+        </div>
+
+        <div class="login-section" id="loginSection">
+            <h2>Employee Login</h2>
+            <div class="form-group">
+                <label for="employeeName">Your Name:</label>
+                <input type="text" id="employeeName" placeholder="Enter your full name">
+            </div>
+            <div class="form-group">
+                <label for="employeeNumber">Your Employee Number:</label>
+                <input type="number" id="employeeNumber" placeholder="Enter your employee number (1-74)">
+            </div>
+            <button class="btn" onclick="login()">Start Feedback</button>
+            <div class="message error" id="loginError"></div>
+        </div>
+
+        <div class="feedback-section" id="feedbackSection">
+            <div class="current-user" id="currentUser"></div>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalEmployees">52</div>
+                    <div class="stat-label">Employees to Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="completedRatings">0</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="remainingRatings">52</div>
+                    <div class="stat-label">Remaining</div>
+                </div>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <h3>Rate Your Colleagues (1-10 scale)</h3>
+            <div id="employeeList"></div>
+
+            <div class="submit-section">
+                <button class="btn" onclick="submitFeedback()">Submit All Feedback</button>
+            </div>
+            
+            <div class="message success" id="successMessage"></div>
+            <div class="message error" id="feedbackError"></div>
+        </div>
+    </div>
+
+    <script>
+        // Employee data - 53 employees
+        const employees = [
+            {id: 1, name: 'Jitendra Nikhade', number: 1, designation: 'Office Superintendent'},
+            {id: 2, name: 'Surekha Pande', number: 2, designation: 'Office Superintendent'},
+            {id: 3, name: 'Dattatray Raut', number: 3,designation: 'Office Superintendent'},
+            {id: 4, name: 'Kalpana Chandele', number: 4,designation: 'Assistant Superintendent'},
+            {id: 5, name: 'Nilesh Shekar', number: 5,designation: 'Legal Advisor'},
+            {id: 6, name: 'Pawan Kulthe', number: 6, designation: 'Assistant Superintendent'},
+            {id: 7, name: 'Nitin Ambade', number: 7,designation: 'Assistant Superintendent'},
+            {id: 8, name: 'Kiran Supe', number: 8,designation: 'Assistant Superintendent'},
+            {id: 9, name: 'Hemant Kadnake', number: 9, designation: 'Assistant Superintendent'},
+            {id: 10, name: 'Naresh Nikhare', number: 10 ,designation: 'Assistant Superintendent'},
+            {id: 11, name: 'Madhuri Nimkar', number: 11, designation: 'Assistant Superintendent'},
+            {id: 12, name: 'Kishor Eknar', number: 12, designation: 'Assistant Superintendent'},
+            {id: 13, name: 'Bhagwan Chandrawanshi', number: 13 ,designation: 'Assistant Superintendent'},
+            {id: 14, name: 'Abhijeet Tekam', number: 14, designation: 'Higher-Grade Stenographer'},
+            {id: 16, name: 'Prakash Bonde', number: 16, designation: 'Senior Clerk'},
+            {id: 17, name: 'Rushikesh Pullarwar', number: 17, designation: 'Senior Clerk'},
+            {id: 18, name: 'Priya Lekurwale', number: 18, designation: 'Senior Clerk'},
+            {id: 19, name: 'Dipak Dafade', number: 19, designation: 'Senior Clerk'},
+            {id: 20, name: 'Shalini Kasare', number: 20, designation: 'Senior Clerk'},
+            {id: 21, name: 'Samir Kahile', number: 21, designation: 'Senior Clerk'},
+            {id: 22, name: 'Sachin Meshram', number: 22, designation: 'Senior Clerk'},
+            {id: 23, name: 'Chandrakant Kubade', number: 23, designation: 'Senior Clerk'},
+            {id: 24, name: 'Kavita Patil', number: 24,designation: 'Senior Clerk'},
+            {id: 25, name: 'Nayankumar Hargule', number: 25, designation: 'Senior Clerk'},
+            {id: 26, name: 'Parmeshwar Ambore', number: 26, designation: 'Senior Clerk'},
+            {id: 27, name: 'Nitish Halde', number: 27, designation: 'Junior Clerk'},
+            {id: 28, name: 'Ajay Mahadole', number: 28, designation: 'Junior Clerk'},
+            {id: 29, name: 'Mohan Nagpure', number: 29, designation: 'Junior Clerk'},
+            {id: 30, name: 'Paritosh Shukla', number: 30, designation: 'Junior Clerk'},
+            {id: 31, name: 'Antariksh Kumbhare', number: 31, designation: 'Junior Clerk'},
+            {id: 32, name: 'Shweta Lokhande', number: 32, designation: 'Junior Clerk'},
+            {id: 33, name: 'Bharat Nimaje', number: 33, designation: 'Junior Clerk'},
+            {id: 34, name: 'Chandrashekhar Ukey', number: 34, designation: 'Pharmacy Officer'},
+            {id: 35, name: 'Navkiran Kshiraskar', number: 35, designation: 'Pharmacy Officer'},
+            {id: 36, name: 'Prasanna Waradpande', number: 36,designation: 'Telephone Operator'},
+            {id: 37, name: 'Vijay Dhage', number: 37, designation: 'Bio-medical Engg.'},
+            {id: 38, name: 'Manoj Shriwastav', number: 38, designation: 'Technician'},
+            {id: 39, name: 'Vilash Kedar', number: 39, designation: 'Technician'},
+            {id: 40, name: 'Gauri Zade', number: 40, designation: 'Technician'},
+            {id: 41, name: 'Santosh Ghatol', number: 41, designation: 'Technician'},
+            {id: 42, name: 'Hemant Bendale', number: 42, designation: 'Technician'},
+            {id: 43, name: 'Shubham Pajgade', number: 43, designation: 'Unskill Artizen'},
+            {id: 44, name: 'Vikas Nandurkar', number: 44, designation: 'Unskill Artizen'},
+           {id: 45, name: 'Najim Patel', number: 45, designation: 'Junior Technical Assistant'},
+           {id: 46, name: 'Rahul Harinkhede', number: 46, designation: 'Statistical Assistant'},
+           {id: 47, name: 'Suraj Phule', number: 47,designation: 'Statistical Investigator'},
+           {id: 48, name: 'Prakash Tembhurne', number: 48, designation: 'Health Inspector'},
+           {id: 49, name: 'Sanjay Malwe', number: 49, designation: 'Health Inspector'},
+            {id: 50, name: 'Pradeep Wagh', number: 50, designation: 'Health Inspector'},
+            {id: 51, name: 'Madhukar Tikhe', number: 51, designation: 'Health Inspector'},
+            {id: 52, name: 'Suraj Dhone', number: 52,designation: 'Pharmacy Officer'},
+            {id: 53, name: 'Sandeep Wadibhasme', number: 53,designation: 'Pharmacy Officer'},
+            {id: 74, name: 'Vilas Shette', number: 74, designation: 'Junior Clerk'}
+        ];
+
+        let currentUser = null;
+        let ratings = {};
+        let reasons = {};
+
+        function login() {
+            const name = document.getElementById('employeeName').value.trim();
+            const number = parseInt(document.getElementById('employeeNumber').value);
+            
+            const errorDiv = document.getElementById('loginError');
+            
+            if (!name) {
+                showMessage(errorDiv, 'Please enter your name', 'error');
+                return;
+            }
+            
+            if (!number || number < 1 || number > 74) {
+                showMessage(errorDiv, 'Please enter a valid employee number (1-74)', 'error');
+                return;
+            }
+            
+            const employee = employees.find(emp => emp.number === number);
+            
+            if (!employee) {
+                showMessage(errorDiv, 'Employee number not found', 'error');
+                return;
+            }
+            
+            if (employee.name.toLowerCase() !== name.toLowerCase()) {
+                showMessage(errorDiv, 'Name does not match the employee number', 'error');
+                return;
+            }
+            
+            currentUser = employee;
+            hideMessage(errorDiv);
+            showFeedbackSection();
+        }
+
+        function showFeedbackSection() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('feedbackSection').style.display = 'block';
+            
+            document.getElementById('currentUser').innerHTML = `
+                <strong>Welcome, ${currentUser.name}!</strong><br>
+                Employee designation: ${currentUser.designation}
+            `;
+            
+            const otherEmployees = employees.filter(emp => emp.id !== currentUser.id);
+            const employeeListDiv = document.getElementById('employeeList');
+            
+            employeeListDiv.innerHTML = otherEmployees.map(emp => `
+                <div class="employee-card">
+                    <div class="employee-info">
+                        <div>
+                            <div class="employee-name">${emp.name}</div>
+                            <div class="employee-designation"> Designation- ${emp.designation}</div>
+                        </div>
+                        <div>
+                            <label for="rating_${emp.id}">Rating:</label>
+                            <input type="number" id="rating_${emp.id}" class="rating-input" 
+                                   min="1" max="10" placeholder="1-10" 
+                                   onchange="updateRating(${emp.id}, this.value)">
+                        </div>
+                    </div>
+                    <div class="reason-section" id="reason_section_${emp.id}">
+                        <label for="reason_${emp.id}" id="reason_label_${emp.id}">Reason required:</label>
+                        <textarea id="reason_${emp.id}" placeholder="Please explain your rating..." 
+                                onchange="updateReason(${emp.id}, this.value)"></textarea>
+                    </div>
+                </div>
+            `).join('');
+            
+            updateStats();
+        }
+
+        function updateRating(employeeId, rating) {
+            const ratingValue = parseInt(rating);
+            const reasonSection = document.getElementById(`reason_section_${employeeId}`);
+            const reasonLabel = document.getElementById(`reason_label_${employeeId}`);
+            const reasonTextarea = document.getElementById(`reason_${employeeId}`);
+            
+            if (rating && ratingValue >= 1 && ratingValue <= 10) {
+                ratings[employeeId] = ratingValue;
+                
+                // Show reason section for ratings ≤3 OR ≥9
+                if (ratingValue <= 3) {
+                    reasonSection.style.display = 'block';
+                    reasonLabel.textContent = 'Reason for low score (required for ratings ≤ 3):';
+                    reasonTextarea.placeholder = 'Please explain why you gave this low rating...';
+                    reasonTextarea.className = 'reason-low';
+                } else if (ratingValue >= 9) {
+                    reasonSection.style.display = 'block';
+                    reasonLabel.textContent = 'Reason for high score (required for ratings ≥ 9):';
+                    reasonTextarea.placeholder = 'Please explain why you gave this high rating...';
+                    reasonTextarea.className = 'reason-high';
+                } else {
+                    reasonSection.style.display = 'none';
+                    delete reasons[employeeId];
+                    reasonTextarea.value = '';
+                    reasonTextarea.className = '';
+                }
+            } else {
+                delete ratings[employeeId];
+                reasonSection.style.display = 'none';
+                delete reasons[employeeId];
+            }
+            updateStats();
+        }
+
+        function updateReason(employeeId, reason) {
+            if (reason.trim()) {
+                reasons[employeeId] = reason.trim();
+            } else {
+                delete reasons[employeeId];
+            }
+        }
+
+        function updateStats() {
+            const totalEmployees = employees.length - 1;
+            const completedRatings = Object.keys(ratings).length;
+            const remainingRatings = totalEmployees - completedRatings;
+            const progressPercentage = (completedRatings / totalEmployees) * 100;
+            
+            document.getElementById('totalEmployees').textContent = totalEmployees;
+            document.getElementById('completedRatings').textContent = completedRatings;
+            document.getElementById('remainingRatings').textContent = remainingRatings;
+            document.getElementById('progressFill').style.width = progressPercentage + '%';
+        }
+
+        async function submitFeedback() {
+            const errorDiv = document.getElementById('feedbackError');
+            const successDiv = document.getElementById('successMessage');
+            
+            const totalEmployees = employees.length - 1;
+            const completedRatings = Object.keys(ratings).length;
+            
+            if (completedRatings < totalEmployees) {
+                showMessage(errorDiv, `You must rate ALL ${totalEmployees} employees before submitting. Currently rated: ${completedRatings}`, 'error');
+                return;
+            }
+            
+            // Check for missing reasons (ratings ≤3 OR ≥9)
+            const ratingsNeedingReasons = Object.entries(ratings).filter(([id, rating]) => rating <= 3 || rating >= 9);
+            const missingReasons = ratingsNeedingReasons.filter(([id, rating]) => !reasons[id] || reasons[id].trim() === '');
+            
+            if (missingReasons.length > 0) {
+                const employeeNames = missingReasons.map(([id, rating]) => {
+                    const emp = employees.find(e => e.id == id);
+                    const ratingText = rating <= 3 ? `low score (${rating})` : `high score (${rating})`;
+                    return emp ? `${emp.name} - ${ratingText}` : `Employee #${id} - ${ratingText}`;
+                }).join(', ');
+                
+                showMessage(errorDiv, `Please provide reasons for the following ratings: ${employeeNames}`, 'error');
+                return;
+            }
+            
+            hideMessage(errorDiv);
+            
+            const feedbackData = {
+                evaluator: {
+                    id: currentUser.id,
+                    name: currentUser.name,
+                    number: currentUser.number
+                },
+                ratings: ratings,
+                reasons: reasons,
+                timestamp: new Date().toISOString(),
+                completedAt: new Date().toLocaleString()
+            };
+            
+            try {
+                // Send to backend
+                const response = await fetch('/api/feedback', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(feedbackData)
+                });
+                
+                if (response.ok) {
+                    const lowScores = Object.entries(ratings).filter(([id, rating]) => rating <= 3);
+                    const highScores = Object.entries(ratings).filter(([id, rating]) => rating >= 9);
+                    
+                    showMessage(successDiv, `
+                        ✅ Feedback submitted successfully!<br>
+                        📊 You rated all ${totalEmployees} colleagues.<br>
+                        ⚠️ ${lowScores.length} low score(s) with reasons provided.<br>
+                        ⭐ ${highScores.length} high score(s) with reasons provided.<br>
+                        💾 Data saved to server.
+                    `, 'success');
+                    
+                    // Disable form
+                    document.querySelectorAll('input, textarea').forEach(el => el.disabled = true);
+                    document.querySelector('.submit-section button').disabled = true;
+                    document.querySelector('.submit-section button').textContent = 'Feedback Submitted';
+                } else {
+                    throw new Error('Server error');
+                }
+            } catch (error) {
+                // Fallback - show message without localStorage since it's not available
+                const lowScores = Object.entries(ratings).filter(([id, rating]) => rating <= 3);
+                const highScores = Object.entries(ratings).filter(([id, rating]) => rating >= 9);
+                
+                showMessage(successDiv, `
+                    ✅ Feedback completed!<br>
+                    📊 You rated all ${totalEmployees} colleagues.<br>
+                    ⚠️ ${lowScores.length} low score(s) with reasons.<br>
+                    ⭐ ${highScores.length} high score(s) with reasons.<br>
+                    🔄 Server connection failed - please try again.
+                `, 'success');
+            }
+        }
+
+        function showMessage(element, message, type) {
+            element.innerHTML = message;
+            element.className = `message ${type}`;
+            element.style.display = 'block';
+        }
+
+        function hideMessage(element) {
+            element.style.display = 'none';
+        }
+
+        // Initialize
+        console.log('Employee Feedback System initialized with', employees.length, 'employees');
+    </script>
+</body>
+</html>
